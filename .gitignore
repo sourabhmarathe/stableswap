@@ -1,2 +1,6 @@
+# Foundry
 cache/
 out/
+
+# NPM
+node_modules/
