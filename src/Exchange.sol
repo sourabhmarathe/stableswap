@@ -32,7 +32,7 @@ contract Exchange {
     // an {OrderFilled} event is emitted. If there is enough liquidity, pops the 
     // order queue until sufficient balances have been accounted for. For 
     // partial account, puts the remaining amount back on the queue.
-    function sellToken1(uint256 amount) payable external {
+    function swapForToken2(uint256 amount) payable external {
         require(token1.balanceOf(msg.sender) > amount);
         bool sufficientLiquidity = pendingOrders2.availableBalance() > amount;
         if (sufficientLiquidity) {
@@ -56,8 +56,8 @@ contract Exchange {
         }
     }
 
-    // Same function as {sellToken1} except it allows caller to sell {token2}.
-    function sellToken2(uint256 amount) payable external {
+    // Same function as {swapForToken2} except it allows caller to sell {token2}.
+    function swapForToken1(uint256 amount) payable external {
         require(token2.balanceOf(msg.sender) > amount);
         bool sufficientLiquidity = pendingOrders1.availableBalance() > amount;
         if (sufficientLiquidity) {
