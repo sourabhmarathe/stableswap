@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Queue.sol";
+import "./Interfaces.sol";
 
 /*
 This supports swaps between assets that are supposed to have the same price. 
