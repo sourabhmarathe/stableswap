@@ -8,37 +8,45 @@ import './Exchange.sol';
 * have been created.
 */
 contract Factory {
-    address public exchangeTemplate;
     uint256 public tokenCount;
-    mapping(address => address) tokenToExchange;
-    mapping(address => address) exchangeToToken;
-    mapping(uint256 => address) idToToken;
+    struct TokenPair {
+        address token1;
+        address token2;
+    }
+    mapping(bytes32 => address) tokenPairToExchange;
+    mapping(address => TokenPair) exchangeToTokenPair;
+    mapping(uint256 => TokenPair) idToTokenPair;
 
-    event NewExchange(address, address);
+    event NewExchange(address, address, address);
 
-    function createExchange(address token) public returns (address) {
-        require(token != address(0));
-        require(exchangeTemplate != address(0));
-        require(tokenToExchange[token] != address(0));
+    function createExchange(address token1, address token2) public returns (address) {
+        require(token1 != address(0));
+        require(token2 != address(0));
+        require(token1 != token2);
+        TokenPair memory tokenPair = TokenPair(token1, token2);
+        bytes32 tokenPairHash = keccak256(abi.encodePacked(token1, token2));
+        require(tokenPairToExchange[tokenPairHash] != address(0));
 
-        address exchange = address(Exchange(token));
+        Exchange exchange = new Exchange(token1, token2);
+        address exchangeAddr = address(exchange);
 
         uint256 tokenID = tokenCount + 1;
         tokenCount = tokenID;
-        idToToken[tokenID] = token;
-        emit NewExchange(token, exchange);
-        return exchange;
+        idToTokenPair[tokenID] = tokenPair;
+        emit NewExchange(token1, token2, exchangeAddr);
+        return exchangeAddr;
     } 
 
-    function getExchange(address token) external view returns (address) {
-        return tokenToExchange[token];
+    function getExchange(TokenPair memory tokenPair) external view returns (address) {
+        bytes32 tokenPairHash = keccak256(abi.encodePacked(tokenPair.token1, tokenPair.token2));
+        return tokenPairToExchange[tokenPairHash];
     }
 
-    function getToken(address exchange) public view returns (address) {
-        return exchangeToToken[exchange];
+    function getTokenPair(address exchange) public view returns (TokenPair memory) {
+        return exchangeToTokenPair[exchange];
     }
 
-    function getTokenWithId(uint256 tokenID) public view returns (address) {
-        return idToToken[tokenID];
+    function getTokenPairWithId(uint256 tokenID) public view returns (TokenPair memory) {
+        return idToTokenPair[tokenID];
     }    
 }

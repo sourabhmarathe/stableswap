@@ -12,8 +12,8 @@ In other words, there are two queues available which store each assets supply.
 Orders are satisfied as the get pushed onto the queue.
 */
 contract Exchange {
-    IERC20 token1;
-    IERC20 token2;
+    IERC20 public token1;
+    IERC20 public token2;
 
     Queue pendingOrders1;
     Queue pendingOrders2;
